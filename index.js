@@ -35,7 +35,7 @@ function calculate(expression) {
     "/": (a, b) => a / b,
   };
   //The match() method returns an array of strings that match the pattern. If no matches are found, it returns null.
-  const tokens = expression.match(/([+\-]?[0-9.]+|[+\-x/])/g); 
+  const tokens = expression.match(/[+\-*/x]|\d+\.\d+|\d+/g);
   console.log(tokens)
   const numbers = []; // store numbers.
   const ops = []; // store operators.
