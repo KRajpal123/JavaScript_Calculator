@@ -12,6 +12,9 @@ function handleButtonClick(event) {
   const clickedButton = event.target; // getting each btn clicked 
   const buttonText = clickedButton.textContent; // getting each text value of btn
 
+  console.log("Button Text:", buttonText);
+  console.log("Current Input Value:", input.value);
+
   if (buttonText === "C") {
     input.value = "";  // clear all inputs 
   } else if (buttonText === "=") {
@@ -27,34 +30,40 @@ function handleButtonClick(event) {
 }
 
 function calculate(expression) {
-  // Define operators and their corresponding functions
   const operators = {
     "+": (a, b) => a + b,
     "-": (a, b) => a - b,
-    "x": (a, b) => a * b,
+    "*": (a, b) => a * b,
     "/": (a, b) => a / b,
   };
-  //The match() method returns an array of strings that match the pattern. If no matches are found, it returns null.
-  const tokens = expression.match(/[+\-*/x]|\d+\.\d+|\d+/g);
-  console.log(tokens)
-  const numbers = []; // store numbers.
-  const ops = []; // store operators.
 
-  for (const token of tokens) {
-    if (token.trim() === "") continue; // skipping empty tokens
+  const tokens = expression.match(/[+\-*/]|\d+\.\d+|\d+/g);
+  const numbers = [];
+  const ops = [];
+
+  for (let i = 0; i < tokens.length; i++) {
+    const token = tokens[i];
+    if (token.trim() === "") continue;
 
     if (operators[token]) {
-      while (
-        ops.length > 0 &&
-        operators[ops[ops.length - 1]] &&
-        hasPrecedence(token, ops[ops.length - 1])
-      ) {
-        const operator = ops.pop();
-        const b = numbers.pop();
-        const a = numbers.pop();
-        numbers.push(operators[operator](a, b));
+      if (i === 0 || tokens[i - 1] === "(") {
+        // Unary minus case
+        const number = parseFloat(tokens[i + 1]) * -1;
+        numbers.push(number);
+        i++; // Skip the next token
+      } else {
+        while (
+          ops.length > 0 &&
+          operators[ops[ops.length - 1]] &&
+          hasPrecedence(token, ops[ops.length - 1])
+        ) {
+          const operator = ops.pop();
+          const b = numbers.pop();
+          const a = numbers.pop();
+          numbers.push(operators[operator](a, b));
+        }
+        ops.push(token);
       }
-      ops.push(token);
     } else {
       numbers.push(parseFloat(token));
     }
@@ -74,8 +83,8 @@ function hasPrecedence(op1, op2) {
   const precedence = {
     "+": 1,
     "-": 1,
-    "x": 2,
+    "*": 2,
     "/": 2,
   };
-  return precedence[op1] <= precedence[op2];
+  return precedence[op1] < precedence[op2];
 }
