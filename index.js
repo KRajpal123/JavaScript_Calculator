@@ -88,3 +88,15 @@ function hasPrecedence(op1, op2) {
   };
   return precedence[op1] < precedence[op2];
 }
+
+
+const Delete_Elm_OneByone = document.getElementById("delete");
+
+Delete_Elm_OneByone.addEventListener("click", removeElem);
+
+function removeElem() {
+  const storeValues = input.value;
+  if (storeValues.length > 0) {
+    input.value = storeValues.slice(0, -1); // Remove the last character
+  }
+}
